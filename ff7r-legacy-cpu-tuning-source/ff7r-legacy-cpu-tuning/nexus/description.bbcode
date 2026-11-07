@@ -1,0 +1,98 @@
+[center][size=6][b]FF7R Legacy CPU Tuning[/b][/size]
+[size=4]Audio crackle and stutter fix for older CPUs, with no visual downgrade[/size][/center]
+
+[line]
+
+[size=5][b]Who this is for[/b][/size]
+You're running [i]Final Fantasy VII Remake Intergrade[/i] on a CPU at or near the game's minimum spec, especially the [b]AMD FX family[/b] (FX-4300, FX-6300, FX-8320, FX-8350, FX-9590), and also Phenom II or early Intel quad-cores. Your graphics card handles high settings fine, but:
+
+[list]
+[*][b]The audio crackles, pops or turns to static[/b], and the usual fix ([font=Courier New]au.SetAudioChannelCount 0[/font]) mutes footsteps, fire and ambience.
+[*][b]The game hitches[/b] in busy areas like the Sector 7 slums and Wall Market.
+[/list]
+
+Both problems come from the CPU. When an older processor is maxed out, the audio mixer misses its deadlines and asset loading arrives in bursts. This mod fixes the [b]scheduling[/b], not the graphics. [b]No visual setting is lowered.[/b] Play at the settings you already use.
+
+[line]
+
+[size=5][b]What it does[/b][/size]
+
+[b]1. A tuned Engine.ini, generated for your PC[/b]
+The installer detects your CPU threads, graphics memory and RAM, then writes a config sized to them:
+[list]
+[*]Larger, deeper audio buffers with a full voice budget: [b]no muted sounds[/b]
+[*]Audio decode workers matched to your core count
+[*]Texture and level streaming spread across frames, with the pool sized to your VRAM
+[*]Dynamic resolution off, so the image stays sharp
+[/list]
+
+[b]2. A launcher that tunes Windows while you play[/b] (everything reverts when the game closes)
+[list]
+[*]Temporary power plan: CPU held at full clock, all cores awake, PCIe and USB power saving off
+[*]Starts the game with [font=Courier New]-USEALLAVAILABLECORES[/font]
+[*]Game priority Above Normal; Windows' audio engine priority High
+[/list]
+
+[line]
+
+[size=5][b]Requirements[/b][/size]
+[list]
+[*][url=https://www.nexusmods.com/finalfantasy7remake/mods/74]FFVIIHook[/url] by emoose ([b]required[/b]; without it the game ignores Engine.ini)
+[*]Windows 10 or 11
+[*]Steam version (Epic works too; see below)
+[/list]
+
+[line]
+
+[size=5][b]Installation[/b][/size]
+[list=1]
+[*]Install [url=https://www.nexusmods.com/finalfantasy7remake/mods/74]FFVIIHook[/url]: put [font=Courier New]xinput1_3.dll[/font] next to [font=Courier New]ff7remake_.exe[/font] in [font=Courier New]End\Binaries\Win64[/font].
+[*]Extract this mod anywhere, for example your desktop.
+[*]Double-click [b]1 - Install (run once).bat[/b]. It shows what it detected, backs up your existing Engine.ini and writes the tuned one.
+[*]From now on, start the game with [b]2 - Play FF7R.bat[/b]. Approve the admin prompt and leave its small window open while you play.
+[/list]
+
+[b]Epic Games Store:[/b] open a command prompt in the mod folder, run [font=Courier New]"2 - Play FF7R.bat" -NoLaunch[/font], then start the game from Epic.
+
+[b]Why admin?[/b] Windows only lets admin tools switch power plans and raise the audio engine's priority. The scripts are plain PowerShell; open them in Notepad to see exactly what they do.
+
+[line]
+
+[size=5][b]Uninstall[/b][/size]
+Double-click [b]3 - Uninstall.bat[/b]. It restores your original Engine.ini and removes the power plan. FFVIIHook and your other mods are left alone.
+
+[line]
+
+[size=5][b]Fine-tuning[/b][/size]
+Edit [font=Courier New]Documents\My Games\FINAL FANTASY VII REMAKE\Saved\Config\WindowsNoEditor\Engine.ini[/font]
+[list]
+[*][b]Sounds missing:[/b] raise [font=Courier New]AudioMaxChannels[/font] by 4 (max 48)
+[*][b]Crackle remains:[/b] set [font=Courier New]AudioCallbackBufferFrameSize=3072[/font], or lower [font=Courier New]AudioMaxChannels[/font] by 4
+[*][b]Textures load late:[/b] lower [font=Courier New]r.Streaming.PoolSize[/font] by 500
+[/list]
+Test audio live in the [b]~[/b] console: [font=Courier New]au.SetAudioChannelCount 28[/font]
+
+[line]
+
+[size=5][b]Compatibility[/b][/size]
+[list]
+[*]Works with texture mods, ReShade, Special K and gameplay mods.
+[*][b]Don't combine with other Engine.ini "optimization" or stutter-fix mods[/b]; they edit the same file. This mod already includes streaming fixes.
+[*]Remove any [font=Courier New]au.SetAudioChannelCount 0[/font] line or console habit; it's no longer needed.
+[/list]
+
+[line]
+
+[size=5][b]Tested on[/b][/size]
+AMD FX-8350 / Radeon RX 6600 8 GB / 32 GB DDR3, max settings. Results on other FX-era systems are welcome in the Posts tab; please include your CPU, GPU and what the installer printed.
+
+[line]
+
+[size=5][b]Credits[/b][/size]
+[list]
+[*][b]emoose[/b]: [url=https://www.nexusmods.com/finalfantasy7remake/mods/74]FFVIIHook[/url], which makes any Engine.ini mod possible
+[*][b]ComplexRobot[/b]: [url=https://www.nexusmods.com/finalfantasy7remake/mods/139]streaming stutter fix[/url], the basis of the streaming values
+[*]Steam community members who identified the audio channel-count workaround
+[/list]
+
+Source code: [url=https://github.com/mcirish3/ff7r-legacy-cpu-tuning]github.com/mcirish3/ff7r-legacy-cpu-tuning[/url] (MIT license)
