@@ -13,7 +13,7 @@ cd "$(dirname "$0")"
 VERSION="$(tr -d '[:space:]' < VERSION)"
 NAME="Smooth Midgar"
 STAGE="dist/stage/$NAME"
-ZIP="dist/Smooth-Midgar-v${VERSION}.zip"
+ZIP="dist/FF7R-Legacy-CPU-Tuning-v${VERSION}.zip"  # name the release workflow uploads
 
 # The installer and readme carry the version too; make sure they agree.
 grep -q "\$Version = '${VERSION}'" src/scripts/Install-FF7RTuning.ps1 \

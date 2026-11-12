@@ -82,7 +82,7 @@ nexus/           Nexus Mods listing text (BBCode) and listing details
 build.sh         Builds the release zip into dist/
 ```
 
-Build locally: `./build.sh` produces `dist/Smooth-Midgar-v<version>.zip`.
+Build locally: `./build.sh` produces `dist/FF7R-Legacy-CPU-Tuning-v<version>.zip`.
 
 Publish a release: bump `VERSION` (and the matching version in `Install-FF7RTuning.ps1` and `src/README.txt`), add a `CHANGELOG.md` section, then run **Actions → release → Run workflow**. It builds the zip and publishes the GitHub release.
 
