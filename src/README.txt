@@ -1,4 +1,4 @@
-FF7R LEGACY CPU TUNING  v1.0.0
+SMOOTH MIDGAR (FF7R Legacy CPU Tuning)  v1.1.0
 Audio crackle and stutter fix for Final Fantasy VII Remake Intergrade
 on older CPUs (AMD FX, Phenom II, early Intel quad-cores).
 No visual settings are lowered.
@@ -17,20 +17,25 @@ INSTALL
 1. Extract this folder anywhere (your desktop is fine).
 2. Double-click  "1 - Install (run once).bat"
    It detects your CPU, graphics memory and RAM, backs up any existing
-   Engine.ini, and writes a tuned one.
-3. From now on, start the game with  "2 - Play FF7R.bat"
-   Approve the admin prompt and leave its window open while you play.
-   It reverts everything automatically when the game closes.
+   Engine.ini, and writes a tuned one. Then it closes Steam for a moment,
+   adds the launcher to the game's Steam launch options (your own options
+   are kept) and restarts Steam.
+3. Press Play in Steam as usual. The tuning starts and stops with the
+   game. No extra window, no admin prompt.
+   Log of what it did: %LOCALAPPDATA%\SmoothMidgar\launcher.log
 
-Epic Games Store: open a command prompt in this folder and run
-   "2 - Play FF7R.bat" -NoLaunch
-then start the game from Epic.
+Updating from 1.0.0: run the new installer, then delete the old folder.
+
+Epic Games Store: double-click  "Epic Games - Play FF7R.bat",
+approve the admin prompt, then start the game from Epic and keep that
+window open while you play.
 
 ------------------------------------------------------------------
 UNINSTALL
 ------------------------------------------------------------------
-Double-click  "3 - Uninstall.bat"
-Restores your original Engine.ini and removes the power plan.
+Double-click  "2 - Uninstall.bat"
+Restores your original Engine.ini, removes the power plan, and takes
+the launcher out of the game's Steam launch options.
 
 ------------------------------------------------------------------
 FINE-TUNING
@@ -51,7 +56,9 @@ WHAT THE LAUNCHER CHANGES (only while the game runs)
 - Temporary power plan: CPU at full clock, no core parking,
   PCIe and USB power saving off
 - Game started with -USEALLAVAILABLECORES
-- Game priority Above Normal, Windows audio engine priority High
+- Game priority Above Normal
+- Windows audio engine priority High, only if Steam runs as admin
+  (otherwise skipped; the Engine.ini audio fixes still apply)
 
 ------------------------------------------------------------------
 CREDITS
@@ -60,5 +67,5 @@ emoose          FFVIIHook
 ComplexRobot    Streaming stutter fix (basis of the streaming values)
 Steam community The audio channel-count workaround
 
-Source: https://github.com/mcirish3/ff7r-legacy-cpu-tuning
+Source: https://github.com/mcirish3/Audio-crackle-and-stutter-fix-for-Final-Fantasy-VII-Remake-Intergrade
 License: MIT

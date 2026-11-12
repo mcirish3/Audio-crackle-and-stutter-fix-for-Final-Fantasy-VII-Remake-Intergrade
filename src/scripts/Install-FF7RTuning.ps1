@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  FF7R Legacy CPU Tuning - installer.
+  Smooth Midgar (FF7R Legacy CPU Tuning) - installer.
 
 .DESCRIPTION
   Detects this PC's CPU threads, GPU memory and system RAM, then writes a
@@ -11,7 +11,17 @@
   Engine.ini.pre-legacytuning.bak, and restored by the uninstaller.
 
   Also checks that the game and FFVIIHook are installed, and warns if not.
+
+  Steam: copies the launcher to %LOCALAPPDATA%\SmoothMidgar and adds it to
+  the game's Steam launch options (Steam is closed for a moment while that
+  is saved, then restarted). After that, just press Play in Steam. Your own
+  launch options are kept.
+
   Does not need admin rights.
+
+.PARAMETER SkipSteam
+  Only write Engine.ini; don't touch Steam (Epic users, or to set the
+  launch option yourself).
 
 .PARAMETER VramGB
   Override detected GPU memory (GB), e.g. -VramGB 8
@@ -21,12 +31,14 @@
 #>
 param(
     [int]$VramGB = 0,
-    [int]$Threads = 0
+    [int]$Threads = 0,
+    [switch]$SkipSteam
 )
 
 $ErrorActionPreference = 'Stop'
-$Version = '1.0.0'
+$Version = '1.1.0'
 $Marker  = 'FF7R Legacy CPU Tuning'
+$GameProcessName = 'ff7remake_'
 
 function Say($msg, $color = 'Gray') { Write-Host $msg -ForegroundColor $color }
 
@@ -191,5 +203,45 @@ Say "  $ini"
 Say ("  Audio: {0} channels, {1}-frame buffers, {2} workers" -f $audioChannels, $audioBuffer, $audioWorkers)
 Say ("  Streaming pool: {0} MB, I/O cache: {1} MB" -f $pool, $ioCache)
 Say ""
-Say "Done. Start the game with '2 - Play FF7R.bat' from now on." 'Cyan'
+# ---------------------------------------------------------------------------
+# 5. Steam Play button: launcher + launch option
+# ---------------------------------------------------------------------------
+. (Join-Path $PSScriptRoot 'SteamLaunchOptions.ps1')
+
+$steam = if ($SkipSteam) { $null } else { Get-SteamInfo }
+$steamDone = $false
+if ($steam -and $steam.Configs) {
+    New-Item -ItemType Directory -Path $LauncherDir -Force | Out-Null
+    Copy-Item (Join-Path $PSScriptRoot 'FF7R-Launcher.ps1') $LauncherPath -Force
+    Say ""
+    Say "Launcher copied to: $LauncherPath"
+
+    if (Get-Process -Name $GameProcessName -ErrorAction SilentlyContinue) {
+        Say "The game is running. Close it and run the installer again to set up the Steam Play button." 'Yellow'
+    } else {
+        $restart = Stop-SteamForEdit $steam
+        try { $results = @($steam.Configs | ForEach-Object { Update-LaunchOptions $_.FullName 'add' }) }
+        finally { if ($restart) { Start-Process $steam.Exe -ArgumentList '-silent'; Say "Steam restarted." } }
+        if ($results -contains 'changed') {
+            $steamDone = $true
+            Say "Steam launch option set for FINAL FANTASY VII REMAKE INTERGRADE." 'Green'
+        } elseif ($results -contains 'conflict') {
+            Say "The game's Steam launch options already run another tool with %command%," 'Yellow'
+            Say "so they were left alone. To use Smooth Midgar, put this in front of %command% yourself:" 'Yellow'
+            Say "  $((Get-OurLaunchPrefix) -replace ' %command%$', '')" 'Yellow'
+        } else {
+            Say "FF7 Remake wasn't found in your Steam config. Start it once from Steam, then run this again." 'Yellow'
+        }
+    }
+} elseif (-not $SkipSteam) {
+    Say ""
+    Say "Steam not found: only Engine.ini was installed." 'Yellow'
+}
+
+Say ""
+if ($steamDone) {
+    Say "Done. From now on just press Play in Steam - the tuning starts and stops with the game." 'Cyan'
+} else {
+    Say "Done. Epic Games: start the game with 'Epic Games - Play FF7R.bat'." 'Cyan'
+}
 Say ""

@@ -1,4 +1,4 @@
-[center][size=6][b]FF7R Legacy CPU Tuning[/b][/size]
+[center][size=6][b]Smooth Midgar[/b][/size]
 [size=4]Audio crackle and stutter fix for older CPUs, with no visual downgrade[/size][/center]
 
 [line]
@@ -26,11 +26,12 @@ The installer detects your CPU threads, graphics memory and RAM, then writes a c
 [*]Dynamic resolution off, so the image stays sharp
 [/list]
 
-[b]2. A launcher that tunes Windows while you play[/b] (everything reverts when the game closes)
+[b]2. A launcher that tunes Windows while you play[/b] (starts from Steam's Play button; everything reverts when the game closes)
 [list]
 [*]Temporary power plan: CPU held at full clock, all cores awake, PCIe and USB power saving off
 [*]Starts the game with [font=Courier New]-USEALLAVAILABLECORES[/font]
-[*]Game priority Above Normal; Windows' audio engine priority High
+[*]Game priority Above Normal
+[*]Windows' audio engine priority High, if Steam runs as administrator (otherwise this one step is skipped; the Engine.ini audio fixes still apply)
 [/list]
 
 [line]
@@ -48,18 +49,20 @@ The installer detects your CPU threads, graphics memory and RAM, then writes a c
 [list=1]
 [*]Install [url=https://www.nexusmods.com/finalfantasy7remake/mods/74]FFVIIHook[/url]: put [font=Courier New]xinput1_3.dll[/font] next to [font=Courier New]ff7remake_.exe[/font] in [font=Courier New]End\Binaries\Win64[/font].
 [*]Extract this mod anywhere, for example your desktop.
-[*]Double-click [b]1 - Install (run once).bat[/b]. It shows what it detected, backs up your existing Engine.ini and writes the tuned one.
-[*]From now on, start the game with [b]2 - Play FF7R.bat[/b]. Approve the admin prompt and leave its small window open while you play.
+[*]Double-click [b]1 - Install (run once).bat[/b]. It shows what it detected, backs up your existing Engine.ini and writes the tuned one. Then it closes Steam for a moment, adds the launcher to the game's Steam launch options (your own options are kept), and restarts Steam.
+[*]That's it: [b]press Play in Steam[/b] as usual. No extra window, no admin prompt.
 [/list]
 
-[b]Epic Games Store:[/b] open a command prompt in the mod folder, run [font=Courier New]"2 - Play FF7R.bat" -NoLaunch[/font], then start the game from Epic.
+[b]Updating from 1.0.0:[/b] run the new [b]1 - Install (run once).bat[/b], then delete the old mod folder. The old "2 - Play FF7R.bat" is no longer used.
 
-[b]Why admin?[/b] Windows only lets admin tools switch power plans and raise the audio engine's priority. The scripts are plain PowerShell; open them in Notepad to see exactly what they do.
+[b]Epic Games Store:[/b] double-click [b]Epic Games - Play FF7R.bat[/b], approve the admin prompt, then start the game from Epic and keep that window open while you play.
+
+[b]What the launch option looks like:[/b] Steam runs [font=Courier New]powershell.exe ... -File "...\AppData\Local\SmoothMidgar\FF7R-Launcher.ps1" %command%[/font]. The launcher is plain PowerShell; open it in Notepad to see exactly what it does. It writes what it did to [font=Courier New]launcher.log[/font] in the same folder.
 
 [line]
 
 [size=5][b]Uninstall[/b][/size]
-Double-click [b]3 - Uninstall.bat[/b]. It restores your original Engine.ini and removes the power plan. FFVIIHook and your other mods are left alone.
+Double-click [b]2 - Uninstall.bat[/b]. It restores your original Engine.ini, removes the power plan, and takes the launcher out of the game's Steam launch options (your own options stay). FFVIIHook and your other mods are left alone.
 
 [line]
 
@@ -95,4 +98,4 @@ AMD FX-8350 / Radeon RX 6600 8 GB / 32 GB DDR3, max settings. Results on other F
 [*]Steam community members who identified the audio channel-count workaround
 [/list]
 
-Source code: [url=https://github.com/mcirish3/ff7r-legacy-cpu-tuning]github.com/mcirish3/ff7r-legacy-cpu-tuning[/url] (MIT license)
+Source code: [url=https://github.com/mcirish3/Audio-crackle-and-stutter-fix-for-Final-Fantasy-VII-Remake-Intergrade]GitHub[/url] (MIT license)

@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 # Builds the user-facing release zip into dist/.
 # Layout inside the zip:
-#   FF7R Legacy CPU Tuning/
+#   Smooth Midgar/
 #     1 - Install (run once).bat
-#     2 - Play FF7R.bat
-#     3 - Uninstall.bat
+#     2 - Uninstall.bat
+#     Epic Games - Play FF7R.bat
 #     README.txt
 #     files/  (PowerShell scripts + Engine.ini template)
 set -euo pipefail
 cd "$(dirname "$0")"
 
 VERSION="$(tr -d '[:space:]' < VERSION)"
-NAME="FF7R Legacy CPU Tuning"
+NAME="Smooth Midgar"
 STAGE="dist/stage/$NAME"
-ZIP="dist/FF7R-Legacy-CPU-Tuning-v${VERSION}.zip"
+ZIP="dist/Smooth-Midgar-v${VERSION}.zip"
 
 # The installer and readme carry the version too; make sure they agree.
 grep -q "\$Version = '${VERSION}'" src/scripts/Install-FF7RTuning.ps1 \

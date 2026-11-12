@@ -1,4 +1,4 @@
-# FF7R Legacy CPU Tuning
+# Smooth Midgar (FF7R Legacy CPU Tuning)
 
 **Audio crackle and stutter fix for *Final Fantasy VII Remake Intergrade* on older CPUs, with no visual downgrade.**
 
@@ -17,14 +17,15 @@ Both come from the CPU, not the graphics card. When an older CPU is maxed out, t
 - Texture and level streaming spread across frames (based on ComplexRobot's stutter fix), with the pool sized to your VRAM and the I/O cache sized to your RAM.
 - Dynamic resolution off, because on a CPU-limited PC it blurs the image without saving the frame.
 
-**Launcher** (applied only while the game runs, reverted on exit):
+**Launcher** (starts from Steam's Play button; applied only while the game runs, reverted on exit):
 - A temporary power plan that keeps the CPU at full clock with all cores awake, and turns off PCIe and USB power saving.
 - Starts the game with `-USEALLAVAILABLECORES`.
-- Game priority set to Above Normal, and Windows' audio engine (`audiodg.exe`) set to High.
+- Game priority set to Above Normal.
+- Windows' audio engine (`audiodg.exe`) set to High, when Steam runs as admin. Otherwise this one step is skipped and everything else still applies, so there's never an admin prompt.
 
 ## Requirements
 
-- *Final Fantasy VII Remake Intergrade* on PC (Steam; Epic works with `-NoLaunch`)
+- *Final Fantasy VII Remake Intergrade* on PC (Steam; Epic works with `Epic Games - Play FF7R.bat`)
 - [FFVIIHook](https://www.nexusmods.com/finalfantasy7remake/mods/74) by emoose. Without it the game ignores `Engine.ini`.
 - Windows 10 or 11
 
@@ -32,12 +33,20 @@ Both come from the CPU, not the graphics card. When an older CPU is maxed out, t
 
 1. Install FFVIIHook: put `xinput1_3.dll` next to `ff7remake_.exe` in `End\Binaries\Win64`.
 2. Download the zip from [Releases](../../releases) or [Nexus Mods](https://www.nexusmods.com/finalfantasy7remake/mods/2275) and extract it anywhere, for example your desktop.
-3. Run **`1 - Install (run once).bat`**. It detects your hardware, backs up any existing `Engine.ini` and writes the tuned one.
-4. From now on, start the game with **`2 - Play FF7R.bat`** and approve the admin prompt. Keep its window open while you play.
+3. Run **`1 - Install (run once).bat`**. It detects your hardware, backs up any existing `Engine.ini` and writes the tuned one. Then it closes Steam for a moment, adds the launcher to the game's Steam launch options (your own options are kept) and restarts Steam.
+4. Press **Play** in Steam as usual. The tuning starts and stops with the game, with no extra window and no admin prompt. What it did is logged to `%LOCALAPPDATA%\SmoothMidgar\launcher.log`.
 
-**Epic Games Store:** run `2 - Play FF7R.bat -NoLaunch` from a command prompt, then start the game from Epic.
+The launch option it adds is:
+```
+"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%LOCALAPPDATA%\SmoothMidgar\FF7R-Launcher.ps1" %command%
+```
+(with your real `%LOCALAPPDATA%` path). If the game's launch options already run another tool with `%command%`, the installer leaves them alone and prints this line so you can combine them yourself.
 
-**Uninstall:** run **`3 - Uninstall.bat`**. It restores your original `Engine.ini` and removes the power plan.
+**Updating from 1.0.0:** run the new installer, then delete the old folder. `2 - Play FF7R.bat` is no longer used.
+
+**Epic Games Store:** double-click `Epic Games - Play FF7R.bat`, approve the admin prompt, then start the game from Epic and keep that window open while you play.
+
+**Uninstall:** run **`2 - Uninstall.bat`**. It restores your original `Engine.ini`, removes the power plan, and takes the launcher out of the game's Steam launch options (your own options stay).
 
 ## Tuning
 
@@ -73,7 +82,7 @@ nexus/           Nexus Mods listing text (BBCode) and listing details
 build.sh         Builds the release zip into dist/
 ```
 
-Build locally: `./build.sh` produces `dist/FF7R-Legacy-CPU-Tuning-v<version>.zip`.
+Build locally: `./build.sh` produces `dist/Smooth-Midgar-v<version>.zip`.
 
 Publish a release: bump `VERSION` (and the matching version in `Install-FF7RTuning.ps1` and `src/README.txt`), add a `CHANGELOG.md` section, then run **Actions → release → Run workflow**. It builds the zip and publishes the GitHub release.
 

@@ -23,12 +23,12 @@ jobs:
           V="$(tr -d '[:space:]' < VERSION)"
           echo "VERSION=$V" >> "$GITHUB_ENV"
           awk -v v="$V" '$0 ~ "^## "v {f=1; next} /^## / && f {exit} f' CHANGELOG.md > notes.md
-          [ -s notes.md ] || echo "FF7R Legacy CPU Tuning $V" > notes.md
-          printf '\n**Install:** extract the zip anywhere and run `1 - Install (run once).bat`. Requires [FFVIIHook](https://www.nexusmods.com/finalfantasy7remake/mods/74). See the README for details.\n' >> notes.md
+          [ -s notes.md ] || echo "Smooth Midgar $V" > notes.md
+          printf '\n**Install:** extract the zip anywhere and run `1 - Install (run once).bat`, then press Play in Steam. Requires [FFVIIHook](https://www.nexusmods.com/finalfantasy7remake/mods/74). See the README for details.\n' >> notes.md
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           PRE=""; case "$VERSION" in *-*) PRE="--prerelease";; esac
-          gh release create "v$VERSION" dist/FF7R-Legacy-CPU-Tuning-v$VERSION.zip \
-            --title "FF7R Legacy CPU Tuning $VERSION" --notes-file notes.md --target "$GITHUB_SHA" $PRE
+          gh release create "v$VERSION" dist/Smooth-Midgar-v$VERSION.zip \
+            --title "Smooth Midgar $VERSION" --notes-file notes.md --target "$GITHUB_SHA" $PRE
